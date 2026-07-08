@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Large data files (if any)
+*.csv
+*.npy
+*.npz
+*.h5
+*.pkl
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+data/
+data/
