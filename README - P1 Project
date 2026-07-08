@@ -1,0 +1,106 @@
+# P1 Project — Code Submission
+**Multi-View Clustering for Localized Global Time Series Forecasting**
+**Applied to Electricity Consumption Data**
+
+---
+
+## Folder Structure
+
+```
+original_paper_code/        - Reference: https://github.com/AliReza000J/MVC-Time-series-Forecasting
+MVC-Time-series-Forecasting/ 
+  └── FuzzyClustering/
+      ├── main_clustering.py       
+      ├── Find_Neighbors.py         
+             
+
+Energy_Project/              - First experimental run (zero-fill, Min-Max normalization)
+  ├── scripts/
+  │   ├── ofmvc_clustering.py
+  │   ├── kmeans_clustering.py      
+  │   ├── kshape_clustering.py     
+  │   └── forecasting_*.py          
+  └── results/
+
+Energy_Project_updated/      - Improved experimental run (interpolation, Z-norm, bug fix)
+  ├── scripts/
+  │   ├── preprocess.py                     
+  │   ├── ofmvc_clustering.py                 - updated to use learn_weights=True
+  │   ├── fmvc_clustering.py                  - unchanged (learn_weights=False default)
+  │   ├── kmeans_clustering.py
+  │   ├── kshape_clustering.py
+  │   ├── ofmvc_clustering_temp.py       - view redundancy experiment
+  │   ├── ofmvc_clustering_sun.py        - view redundancy experiment                     
+  │   └── visualization.py               - generates Figure 5
+  └── results/
+      ├── clusters/    (CSV cluster assignments)
+      └── figures/     (weather vs consumption plots)
+
+UCI_Phase1/  - Phase 1 experiments on WISDM, HAR, MHEALTH, PAMAP2
+```
+
+## Key Modification: OFMVC Implementation Fix
+
+The original `main_clustering.py` (downloaded from https://github.com/AliReza000J/MVC-Time-series-Forecasting) had its view-weight optimization step commented out. 
+This was identified and fixed — see Section 6.3 of the final report for full details.
+
+**Summary of changes to `main_clustering.py`:**
+- Added `learn_weights=False` parameter (default preserves original/FMVC behavior)
+- Safe `beta` initialization before the iteration loop
+- Uncommented and activated the view-weight update block (now runs only when `learn_weights=True`)
+- Changed `return Final` to `return Final, w`
+
+
+## How to Reproduce Results
+
+1. Install dependencies: `pip install -r requirements.txt`
+2. Place raw data files (see Data section below) in `Energy_Project/data/` and
+   `Energy_Project_updated/data/raw/`
+3. Run preprocessing: `python Energy_Project_updated/scripts/preprocess.py`
+4. Run clustering scripts (OFMVC, FMVC, K-Means in `mvc_ts` environment;
+   kShape requires a separate environment  (Environment Notes below)
+5. Run forecasting scripts to reproduce SMAPE results
+
+## Environment Notes
+
+- All scripts run in conda environment `mvc_ts` (Python 3.10) EXCEPT:
+- kShape clustering required a separate environment (`kshape_env`) due to a
+  segmentation fault caused by a tslearn/NumPy version incompatibility in `mvc_ts`.
+- See `requirements below for full dependency list.
+
+## Data
+
+Raw data files (smartmeter + weather CSVs) are NOT included in this submission
+due to file size. They are available at the UCloud link provided by the supervisor:
+https://ucloud.univie.ac.at/index.php/s/Wadjay4NxpMLKmw
+
+## Requirements
+pandas
+numpy
+scipy
+scikit-learn
+tensorflow
+tslearn
+statsmodels
+texttable
+matplotlib
+
+
+## Setup Instructions Before Running
+
+This code uses absolute file paths specific to the original development machine.
+Before running, update these paths to match your own system.
+
+1. Place the `P1_Project` folder anywhere on your computer.
+
+2. Open each script in the `scripts/` folder and find the path variables near
+   the top, for example:
+
+       MVC_PATH = '/Users/wishal/Documents/P1_Project/MVC-Time-series-Forecasting'
+
+3. Replace the path with the location of the `P1_Project` folder on your system.
+
+4. Install dependencies: `pip install -r requirements.txt`
+
+5. kShape clustering requires a separate environment due to a library version
+   conflict. See Section 6.4 of the final report for details.

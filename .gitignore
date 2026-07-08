@@ -1,0 +1,12 @@
+.DS_Store
+*.pages
+*.log
+*.npy
+*.csv
+data/
+__pycache__/
+*.pyc
+*.pyo
+.Python
+env/
+venv/
