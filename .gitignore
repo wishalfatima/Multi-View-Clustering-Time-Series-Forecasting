@@ -1,10 +1,22 @@
-Phase2_final/
+# Large datasets and raw data
 *.csv
-*.pkl
 *.h5
 *.npz
 *.mat
+
+# Trained models / serialized outputs
+*.pkl
+
+# Python cache
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# macOS system files
 .DS_Store
+
+# Project-specific large/temporary directory
 Phase2_final/
