@@ -1,0 +1,79 @@
+"""
+forecast_ofmvc_sun_only.py
+===========================
+Forecasting for OFMVC clusters generated using smartmeter + sun radiation
+views only (view redundancy test #2).
+
+"""
+
+import sys
+import os
+import numpy as np
+import pandas as pd
+
+# ── paths ──────────────────────────────────────────────────────────────────────
+MVC_PATH     = '/Users/wishal/Downloads/P1_Project/MVC-Time-series-Forecasting'
+RAW_DATA_23  = '/Users/wishal/Downloads/P1_Project/Energy_Project/data/sample_23_20percent.csv'
+SCRIPTS_DIR  = '/Users/wishal/Downloads/P1_Project/Energy_Project_updated/scripts'
+CLUSTER_FILE = '/Users/wishal/Downloads/P1_Project/Energy_Project_updated/results/clusters/ofmvc_clusters_sun_only.csv'
+
+sys.path.insert(0, MVC_PATH)
+sys.path.insert(0, os.path.join(MVC_PATH, 'Forecasting'))
+sys.path.insert(0, SCRIPTS_DIR)
+
+# ── data loader ────────────────────────────────────────────────────────────────
+def get_electricity_dataset_params(dataset_name='electricity'):
+    data_2023 = pd.read_csv(RAW_DATA_23)
+    n_customers = 5000
+    data_2023 = data_2023.iloc[:n_customers, 1:].values
+    dataset = [data_2023[i, :].astype(float) for i in range(n_customers)]
+    dataset = [ts[~np.isnan(ts)] for ts in dataset]
+    labels  = np.zeros(n_customers, dtype=int)
+    print(f"  Loaded {len(dataset)} customers")
+    return dataset, labels, 28, 18, 17, 0.0001, './data', False, 7
+
+# ── inject data loader ─────────────────────────────────────────────────────────
+import get_m3_dataset_params
+get_m3_dataset_params.get_m3_dataset_params = get_electricity_dataset_params
+import run_model_modified
+run_model_modified.get_m3_dataset_params = get_electricity_dataset_params
+from run_model_modified import run_local_models
+
+# ── load cluster labels ────────────────────────────────────────────────────────
+cluster_labels = pd.read_csv(CLUSTER_FILE)['cluster'].values.astype(int)
+n_clusters = int(np.max(cluster_labels)) + 1
+
+print("="*60)
+print("OFMVC FORECASTING — SUN RADIATION-ONLY VIEWS")
+print("="*60)
+print(f"Clusters    : {n_clusters}")
+print(f"Distribution: {np.bincount(cluster_labels)}")
+
+# ── run forecasting ────────────────────────────────────────────────────────────
+try:
+    res, _, _, _, _, _ = run_local_models(
+        dataset_name='electricity',
+        number_of_clusters=n_clusters,
+        AEName='TCN',
+        Dim=16,
+        epochs=10,
+        batch=20,
+        use_saved_model=False,
+        save_trained_model=False,
+        run=1,
+        external_clusters=cluster_labels[:5000]
+    )
+
+    val_smape  = np.mean(res['val_SMAPE'])
+    test_smape = np.mean(res['test_SMAPE'])
+
+    print("\n" + "="*60)
+    print("RESULTS (sun radiation-only views)")
+    print("="*60)
+    print(f"Validation SMAPE : {val_smape:.2f}%")
+    print(f"Test SMAPE       : {test_smape:.2f}%")
+    print("="*60)
+
+except Exception as e:
+    print(f"\n Error: {e}")
+    import traceback
