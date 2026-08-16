@@ -1,57 +1,10 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-
-# Jupyter
-.ipynb_checkpoints/
-
-# Virtual environments
-venv/
-.venv/
-env/
-.env
-mvc_ts/
-kshape_env/
-
-# macOS
-.DS_Store
-
-# IDEs
-.vscode/
-.idea/
-
-# Large datasets
-data/
+Phase2_final/
 *.csv
-*.parquet
-*.h5
-*.hdf5
-
-# Model files
 *.pkl
-*.pickle
-*.joblib
-*.pt
-*.pth
-*.ckpt
-*.keras
-
-# Large arrays
-*.npy
+*.h5
 *.npz
-
-# Logs
-*.log
-
-# Temporary files
-*.tmp
-*.temp
-
-# Generated experiment outputs
-outputs/
-checkpoints/
-models/
-
-# OS / temporary
-Thumbs.db
+*.mat
+__pycache__/
+*.pyc
+.DS_Store
+Phase2_final/
