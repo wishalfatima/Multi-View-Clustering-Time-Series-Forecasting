@@ -298,9 +298,6 @@ Forecasting performance is primarily evaluated using:
 
 ### Mean Absolute Error (MAE)
 
-[
-MAE = \frac{1}{n}\sum_{i=1}^{n}|y_i-\hat{y}_i|
-]
 
 MAE measures the average absolute difference between the actual and predicted electricity consumption.
 
